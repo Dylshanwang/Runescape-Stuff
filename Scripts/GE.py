@@ -1,14 +1,15 @@
 import json
 from urllib import request
-from datetime import datetime
+from datetime import datetime, timezone
 import pytz
 import pandas as pd
 
 # getting Sydney time in string format so I can track price over time
-time = pytz.timezone('Australia/Sydney')
-fmt = '%Y-%m-%d %H:%M:%S'
-loc_dt = time.localize(datetime.now())
-datetime = loc_dt.strftime(fmt)
+utc_dt = datetime.now(timezone.utc)
+fmt = '%Y-%m-%d %H:%M:S'
+local_datetime = utc_dt.astimezone()
+local_datetime = local_datetime.replace(tzinfo=None)  # removing timezone data
+
 
 # loading in the json data and allowing it to be interpreted in Python via dictionary notation
 url = "https://rsbuddy.com/exchange/summary.json"
@@ -47,8 +48,10 @@ if len(df.index) != len(csv_input.index):
     print("Adding {} to the spreadsheet".format(item_name_list[-1]))
 
 # checks if most recent prices are the same as latest in the csv to avoid duplicate columns
-if all(df.iloc[:, -1]) != all(csv_input.iloc[:, -1]):
+if csv_input.iloc[2][-1] != df.iloc[2][-1] or csv_input.iloc[3][-1] != df.iloc[3][-1]:
 
     # adding a new column with most recent prices
-    csv_input[datetime] = [item_price_list[0], item_price_list[1], item_price_list[2], item_price_list[3]]
-    csv_input.to_csv(csv_file, index=False)
+    csv_input[local_datetime] = [item_price_list[0], item_price_list[1], item_price_list[2], item_price_list[3]]
+    pd_datetime = pd.to_datetime(local_datetime, format="%Y-%m-%d %H:%M:%S")
+
+csv_input.to_csv(csv_file, index=False)
