@@ -1,7 +1,6 @@
 import json
 from urllib import request
 from datetime import datetime, timezone
-import pytz
 import pandas as pd
 
 # getting Sydney time in string format so I can track price over time
