@@ -19,6 +19,7 @@ data = json.loads(response.read())
 csv_file = "C:/Projects/Python/Runescape-Stuff/ItemPrices.csv"
 item_price_list = []
 item_name_list = []
+item_id_list = ["22481", "13652", "13576", "11920"]  # sang, claws, dwh, d pick - item names corresponding to id's
 
 
 # fetches the data from the json and stores them in lists
@@ -28,8 +29,6 @@ def fetch_item_info(item_id):
     return item_price_list, item_name_list
 
 
-# sang, claws, dwh, d pick - item names corresponding to id's
-item_id_list = ["22481", "13652", "13576", "11920"]
 for item in item_id_list:
     fetch_item_info(item)
 
